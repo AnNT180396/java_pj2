@@ -24,6 +24,15 @@ jobs:
       # Step 2: Build the project with Maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
+        
+      # Step 2: Cache Maven Dependencies
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/home/runner/work/java_pj2/webcrawler/target
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
 
        # Step 3: Run unit tests
       - name: Run Unit Tests
