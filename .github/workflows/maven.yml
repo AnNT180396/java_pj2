@@ -43,7 +43,7 @@ jobs:
         id: test
         run: mvn -B test --file webcrawler/pom.xml
 
-      # Step 4: Check test results on failure
+      # Step 5: Show error logs on failure
       - name: Check Test Results
         if: failure() # Executes only if the previous step failed
         run: |
@@ -54,7 +54,7 @@ jobs:
         if: success() # Executes only if all previous steps succeed
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: smtp.your-email-provider.com
+          server_address: smtp.gmail.com
           server_port: 587
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
