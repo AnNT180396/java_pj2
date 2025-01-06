@@ -33,8 +33,8 @@ jobs:
       - name: Cache Maven Dependencies
         uses: actions/cache@v4
         with:
-          path: ~/home/runner/work/java_pj2/webcrawler/target
-          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          path: ~/home/runner/work/java_pj2/java_pj2/webcrawler/target
+          key: maven-${{ runner.os }}-${{ hashFiles('**/webcrawler/pom.xml') }}
           restore-keys: |
             maven-${{ runner.os }}-
             
