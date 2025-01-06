@@ -6,7 +6,7 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Run Unit Test
+name: Run Unit Test (edit)
 
 on:
   pull_request:
