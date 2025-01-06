@@ -48,11 +48,11 @@ jobs:
         if: failure() # Executes only if the previous step failed
         run: |
           echo "Tests failed. Here are the details:"
-          cat target/surefire-reports/*.txt || echo "No test report found."
+          cat webcrawler/target/surefire-reports/*.txt || echo "No test report found."
       # Step 6: Show logs on success
       - name: Show Logs on Success
         if: success()  # Only runs if previous steps succeed
         run: |
           echo "Build and tests were successful. Displaying logs:"
-          cat target/surefire-reports/*.txt  # Show Maven test logs
-          cat target/build.log || echo "No build logs found"  # Show any build logs if available
+          cat webcrawler/target/surefire-reports/*.txt  # Show Maven test logs
+          cat webcrawler/target/build.log || echo "No build logs found"  # Show any build logs if available
