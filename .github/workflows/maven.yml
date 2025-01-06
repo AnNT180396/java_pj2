@@ -1,0 +1,101 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Run Unit Test (edit)
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Debugging: List files to check if pom.xml exists
+      - name: List files in the directory
+        run: ls -la /home/runner/work/java_pj2/java_pj2/
+
+      # Step 2: Cache Maven Dependencies
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/home/runner/work/java_pj2/java_pj2/webcrawler/target
+          key: maven-${{ runner.os }}-${{ hashFiles('**/webcrawler/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      # Step 3: Build the project with Maven
+      - name: Build with Maven
+        run: mvn -B package --file webcrawler/pom.xml
+
+       # Step 4: Run unit tests
+      - name: Run Unit Tests
+        id: test
+        run: mvn -B test --file webcrawler/pom.xml
+
+      # Step 5: Show logs on success
+      - name: Show Logs on Success
+        if: success()  # Only runs if previous steps succeed
+        run: |
+          echo "Build and tests were successful. Displaying logs:"
+          ls -la webcrawler/target/  # List the target directory to confirm where reports are located
+          cat webcrawler/target/surefire-reports/*.txt || echo "No test reports found"
+          cat logs/build.log || echo "No build logs found"
+          cat logs/test.log || echo "No test logs found"
+
+      # Step 6: Send success email on successful PR
+      - name: Send Success Notification
+        if: success()  # Only runs if all steps succeed
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Success: Pull Request #${{ github.event.pull_request.number }} Build Succeeded"
+          to: thanhnguyen3223@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: |
+            The build and tests were successful for PR #${{ github.event.pull_request.number }}.
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.head_ref }}
+            Build Log:
+            ${{ steps.build.outputs.log }}
+            
+            Test Log:
+            ${{ steps.test.outputs.log }}
+
+      # Step 7: Send failure email on failed PR
+      - name: Send Failure Notification
+        if: failure()  # Only runs if the previous steps fail
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Failure: Pull Request #${{ github.event.pull_request.number }} Build Failed"
+          to: thanhnguyen3223@gmail.com
+          from: ${{ secrets.EMAIL_USERNAME }}
+          body: |
+            The build or tests failed for PR #${{ github.event.pull_request.number }}.
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.head_ref }}
+            
+            Build Log:
+            ${{ steps.build.outputs.log }}
+
+            Test Log:
+            ${{ steps.test.outputs.log }}
+
+            Please check the logs for more details.
