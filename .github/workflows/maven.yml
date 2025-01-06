@@ -13,14 +13,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  build-jar:
     runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout code
       - name: Checkout Code
         uses: actions/checkout@v4
-      
+
       # Step 2: Build the project with Maven
       - name: Build with Maven
         run: mvn -B package --file pom.xml
@@ -33,6 +33,9 @@ jobs:
           key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             maven-${{ runner.os }}-
+
+      - name: List files in the directory
+        run: ls
 
        # Step 3: Run unit tests
       - name: Run Unit Tests
