@@ -48,9 +48,10 @@ jobs:
         if: success()  # Only runs if previous steps succeed
         run: |
           echo "Build and tests were successful. Displaying logs:"
-          cat target/surefire-reports/*.txt  # Show Maven test logs
-          cat target/build.log || echo "No build logs found"  # Show build logs if available
-      
+          ls -la webcrawler/target/  # List the target directory to confirm where reports are located
+          cat webcrawler/target/surefire-reports/*.txt || echo "No test reports found"
+          cat webcrawler/target/build.log || echo "No build logs found"  # Show build logs if available
+
       # Step 6: Send success email on successful PR
       - name: Send Success Notification
         if: success()  # Only runs if all steps succeed
