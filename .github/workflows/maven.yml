@@ -49,20 +49,10 @@ jobs:
         run: |
           echo "Tests failed. Here are the details:"
           cat target/surefire-reports/*.txt || echo "No test report found."
-      # Step 5: Send email on success
-      - name: Send Success Email
-        if: success() # Executes only if all previous steps succeed
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Pull Request Workflow Success"
-          to: thanhnguyen3223@gmail.com
-          from: thanhnguyen3223@gmail.com
-          body: |
-            The build and unit tests passed successfully for PR #${{ github.event.pull_request.number }}.
-            Repository: ${{ github.repository }}
-            Branch: ${{ github.head_ref }}
-     
+      # Step 6: Show logs on success
+      - name: Show Logs on Success
+        if: success()  # Only runs if previous steps succeed
+        run: |
+          echo "Build and tests were successful. Displaying logs:"
+          cat target/surefire-reports/*.txt  # Show Maven test logs
+          cat target/build.log || echo "No build logs found"  # Show any build logs if available
